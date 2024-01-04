@@ -10,15 +10,22 @@
 using namespace std;
 
 // Si existeix a la base de dades un Usuari amb sobrenom "sn" i contrasenya "ct", es
-// guarda a v.usu, on v Ès la inst‡ncia singleton de Videoconsola, el nom, sobrenom,
-// contrasenya, correu electrÚnic i data de naixement de l'usuari amb sobrenom sn.
+// guarda a v.usu, on v √©s la inst√†ncia singleton de Videoconsola, el nom, sobrenom,
+// contrasenya, correu electr√≤nic i data de naixement de l'usuari amb sobrenom sn.
 // Altrament es produeix un error
 void iniciSessio(std::string sn, std::string ct);
 
-// Si no existeix a la base de dades cap Usuari amb sobrenom "sn" i/o correu electrÚnic "ct", 
+// Si no existeix a la base de dades cap Usuari amb sobrenom "sn" i/o correu electr√≤nic "ct", 
 // s'insereix un nou Usuari a la base de dades amb nom "n", sobrenom "sn", contrasenya "ct",
-// correu electrÚnic "ce" i data "dn". Altrament es produeix un error
+// correu electr√≤nic "ce" i data "dn". Altrament es produeix un error
 void registrarUsuari(std::string n, std::string sn, std::string ct, std::string ce, std::string dn);
 
+// vc.usu √©s l'usuari loggejat
+// mostra el nom, sobrenom, correu electr√≤nic i data de naixement de vc.usu
+void consultarUsuari(Videoconsola& vc);
+
+// vc.usu √©s l'usuari loggejat
+// mostra el nombre de videojocs i paquets comprats i la quantitat d'euros gastats per vc.usu
+void infoCompres(Videoconsola& vc);
 
 #endif
