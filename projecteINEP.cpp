@@ -74,9 +74,113 @@ int main() {
 				case 3: fi = true;
 					break;
 			}
-		}
-		if (not fi) {
-			// Codi del programa quan la sessió està iniciada
+
+			// Usuari loggejat
+			while (vc.obteEstatSessio() and (not fi)) {
+				std::cout << "******************" << std::endl;
+				std::cout << "  Menu Principal  " << std::endl;
+				std::cout << "******************" << std::endl;
+				std::cout << "1. Gestionar usuari" << std::endl;
+				bool gestioUsuari = false;
+				std::cout << "2. Gestionar compres" << std::endl;
+				bool gestioCompres = false;
+				std::cout << "3. Consultar" << std::endl;
+				bool consultesVideojocs = false;
+				std::cout << "4. Tancar sessio" << std::endl;
+				std::cout << "5. Sortir" << std::endl;
+				std::cout << "Opcio: ";
+				std::cin >> opcio;
+				switch (opcio) {
+					case 1: gestioUsuari = true;
+						break;
+					case 2: gestioCompres = true;
+						break;
+					case 3: consultesVideojocs = true;
+						break;
+					case 4: vc.canviaEstatSessio(false);
+						break;
+					case 5: fi = true;
+						break;
+				}
+
+				if (vc.obteEstatSessio() and (not fi)) {
+					while (gestioUsuari) {
+						std::cout << "--------------------" << std::endl;
+						std::cout << "  Gestionar usuari  " << std::endl;
+						std::cout << "--------------------" << std::endl;
+						std::cout << "1. Consultar usuari" << std::endl;
+						std::cout << "2. Modificar usuari" << std::endl;
+						std::cout << "3. Esborrar usuari" << std::endl;
+						std::cout << "4. Tornar" << std::endl;
+						std::cout << "Opcio: ";
+						std::cin >> opcio;
+						switch (opcio) {
+							case 1: // codi de consultar usuari
+								break;
+							case 2: // codi de modificar usuari
+								break;
+							case 3: // codi de esborrar usuari
+								break;
+							case 4: gestioUsuari = false;
+								break;
+						}
+					}
+
+					while (gestioCompres) {
+						std::cout << "--------------------" << std::endl;
+						std::cout << "  Gestionar compres  " << std::endl;
+						std::cout << "--------------------" << std::endl;
+						std::cout << "1. Comprar videojoc" << std::endl;
+						std::cout << "2. Comprar paquet videojoc" << std::endl;
+						std::cout << "3. Consultar compres" << std::endl;
+						std::cout << "4. Tornar" << std::endl;
+						std::cout << "Opcio: ";
+						std::cin >> opcio;
+						switch (opcio) {
+							case 1: // codi de Comprar videojoc
+								break;
+							case 2: // codi de Comprar paquet videojoc
+								break;
+							case 3: // codi de Consultar compres
+								break;
+							case 4: gestioCompres = false;
+								break;
+						}
+					}
+
+					while (consultesVideojocs)) {
+						std::cout << "--------------------" << std::endl;
+						std::cout << "  Consultes videojocs  " << std::endl;
+						std::cout << "--------------------" << std::endl;
+						std::cout << "1. Consultar videojoc" << std::endl;
+						std::cout << "2. Consultar videojocs" << std::endl;
+						std::cout << "3. Consultar videojoc per edat" << std::endl;
+						std::cout << "4. Consultar novetats videojocs" << std::endl;
+						std::cout << "5. Consultar paquet videojocs" << std::endl;
+						std::cout << "6. Consultar paquets videojocs" << std::endl;
+						std::cout << "7. Tornar" << std::endl;
+						std::cout << "Opcio: ";
+						std::cin >> opcio;
+						switch (opcio) {
+							case 1: // codi de Consultar videojoc
+								break;
+							case 2: // codi de Consultar videojocs
+								break;
+							case 3: // codi de Consultar videojoc per edat
+								break;
+							case 4: // codi de Consultar novetats videojocs
+								break;
+							case 5: // codi de Consultar paquet videojocs
+								break;
+							case 6: // codi de Consultar paquets videojocs
+								break;
+							case 7: consultesVideojocs = false;
+								break;
+						}
+					}
+				}		
+			}
+			
 		}
 
 		/* Comandos de prueba
