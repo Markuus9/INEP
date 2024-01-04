@@ -115,7 +115,9 @@ int main() {
 						std::cout << "Opcio: ";
 						std::cin >> opcio;
 						switch (opcio) {
-							case 1: // codi de consultar usuari
+							case 1: std::cout << "** Consulta usuari **" << std::endl;
+								consultarUsuari(vc);
+								infoCompres(vc);
 								break;
 							case 2: // codi de modificar usuari
 								break;
