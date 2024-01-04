@@ -5,11 +5,11 @@ void iniciSessio(std::string sn, std::string ct) {
 	try {
 		pqxx::connection conn("dbname=SistemaGestioVideojocs user=postgres password=inep2023 hostaddr = 127.0.0.1 port = 5432");
 		if (conn.is_open()) {
-			std::cout << "Connexió exitosa amb la base de dades." << std::endl <<
+			std::cout << "ConnexiÃ³ exitosa amb la base de dades." << std::endl <<
 				std::endl;
 		}
 		else {
-			std::cerr << "Error de connexió amb la base de dades." << std::endl <<
+			std::cerr << "Error de connexiÃ³ amb la base de dades." << std::endl <<
 				std::endl;
 		}
 		pqxx::work txn(conn);
@@ -18,14 +18,14 @@ void iniciSessio(std::string sn, std::string ct) {
 		pqxx::result result = txn.exec(comanda);
 		try {
 			if (result.size() != 1 or (result.size() == 1 and result[0][0].c_str() != ct)) {
-				// Busquem per clau primària. "result" té una fila o no en té cap.
-				// Mirem la primera columna (i única) del resultat, que és la contrasenya:
+				// Busquem per clau primÃ ria. "result" tÃ© una fila o no en tÃ© cap.
+				// Mirem la primera columna (i Ãºnica) del resultat, que Ã©s la contrasenya:
 				throw "Hi ha hagut un error amb el sobrenom o la contrasenya.";
 			}
 			else {
 				Videoconsola& v = Videoconsola::getInstance();
 				v.canviaEstatSessio(true);
-				// Busquem la resta dels atributs de l'usuari per guardar la informació a la instància
+				// Busquem la resta dels atributs de l'usuari per guardar la informaciÃ³ a la instÃ ncia
 				// de Videoconsola:
 				string comanda = "SELECT * FROM public.\"Usuari\" WHERE sobrenom = ";
 				comanda = comanda + "\'" + sn + "\'";
@@ -55,7 +55,7 @@ void iniciSessio(std::string sn, std::string ct) {
 		catch (const char* err) {
 			std::cout << err << endl;
 		}
-		// Confirmar la transacció:
+		// Confirmar la transacciÃ³:
 		txn.commit();
 	}
 	catch (const std::exception& e) {
@@ -67,11 +67,11 @@ void registrarUsuari(std::string n, std::string sn, std::string ct, std::string 
 	try {
 		pqxx::connection conn("dbname=SistemaGestioVideojocs user=postgres password=inep2023 hostaddr = 127.0.0.1 port = 5432");
 		if (conn.is_open()) {
-			std::cout << "Connexió exitosa amb la base de dades." << std::endl <<
+			std::cout << "ConnexiÃ³ exitosa amb la base de dades." << std::endl <<
 				std::endl;
 		}
 		else {
-			std::cerr << "Error de connexió amb la base de dades." << std::endl <<
+			std::cerr << "Error de connexiÃ³ amb la base de dades." << std::endl <<
 				std::endl;
 		}
 		pqxx::work txn(conn);
@@ -84,7 +84,7 @@ void registrarUsuari(std::string n, std::string sn, std::string ct, std::string 
 			std::cout << "Ja existeix un usuari amb aquest sobrenom." << endl;
 		}
 		else {
-			// Comprovem si existeix algun usuari amb correu electrònic "ce":
+			// Comprovem si existeix algun usuari amb correu electrÃ²nic "ce":
 			comanda = "SELECT \"correuElectronic\" FROM public.\"Usuari\" WHERE \"correuElectronic\" = ";
 			comanda = comanda + "\'" + ce + "\'";
 			result = txn.exec(comanda);
@@ -103,10 +103,72 @@ void registrarUsuari(std::string n, std::string sn, std::string ct, std::string 
 				std::cout << "Nou usuari registrat correctament!" << endl;
 			}
 		}
-		// Confirmar la transacció:
+		// Confirmar la transacciÃ³:
 		txn.commit();
 	}
 	catch (const char* err) {
 		std::cout << err << endl;
+	}
+}
+
+void consultarUsuari(Videoconsola& vc) {
+	std::cout << "Nom complet: " << vc.obteNomUsuari() << std::endl;
+	std::cout << "Sobrenom: " << vc.obteSobrenomUsuari() << std::endl;
+	std::cout << "Correu electronic: " << vc.obteCorreuElectronicUsuari() << std::endl;
+	std::cout << "Data naixement (AAAA/MM/DD): " << vc.obteDataNaixementUsuari() << std::endl;
+	std::endl;
+}
+
+void infoCompres(Videoconsola& vc) {
+	try {
+		pqxx::connection conn("dbname=SistemaGestioVideojocs user=postgres password=inep2023 hostaddr = 127.0.0.1 port = 5432");
+		if (conn.is_open()) {
+			std::cout << "Connexiï¿½ exitosa amb la base de dades." << std::endl << std::endl;
+		}
+		else {
+			std::cerr << "Error de connexiï¿½ amb la base de dades." << std::endl << std::endl;
+		}
+		pqxx::work txn(conn);
+
+		string comanda = "SELECT c.preuPagat, e.tipus ";
+		comanda += "FROM public.\'compra c\', \'elementcompra e\' ";
+		comanda += "WHERE c.usuari = \'" + vc.obteSobrenomUsuari() + "\'";
+		comanda += "AND e.nom = c.element ";
+		pqxx::result result = txn.exec(comanda);
+		try {
+			int videojocsComprats = 0;
+			int paquetsComprats = 0;
+			float eurosGastats = 0;
+
+			for (size_t i = 0; i < result.size(); ++i) {
+				eurosGastats += atof(result[i][0].c_str());
+				if (result[i][1].c_str() == "videojoc") ++videojocsComprats;
+				else ++paquetsComprats; 
+			}
+
+			std::cout << videojocsComprats << " videojoc";
+			if (videojocsComprats != 1) std::cout << "s";
+			std::cout << " comprat";
+			if (videojocsComprats != 1) std::cout << "s";
+
+			std::cout << endl << paquetsComprats << " paquet";
+			if (paquetsComprats != 1) std::cout << "s";
+			std::cout << " de videojocs comprat";
+			if (paquetsComprats != 1) std::cout << "s";
+
+			std::cout << endl << eurosGastats << " euro";
+			if (eurosGastats != 1) std::cout << "s";
+			std::cout << " gastat";
+			if (eurosGastats != 1) std::cout << "s";
+			std::cout << " en total" << endl;
+		}
+		catch (const char* err) {
+			std::cout << err << endl;
+		}
+		// Confirmar la transacciï¿½:
+		txn.commit();
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Error: " << e.what() << std::endl;
 	}
 }
