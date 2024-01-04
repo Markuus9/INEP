@@ -148,7 +148,7 @@ int main() {
 						}
 					}
 
-					while (consultesVideojocs)) {
+					while (consultesVideojocs) {
 						std::cout << "--------------------" << std::endl;
 						std::cout << "  Consultes videojocs  " << std::endl;
 						std::cout << "--------------------" << std::endl;
