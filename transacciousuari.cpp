@@ -130,7 +130,9 @@ void infoCompres(Videoconsola& vc) {
 		}
 		pqxx::work txn(conn);
 
-		string comanda = "SELECT c.preuPagat, e.tipus ";
+		// result: taula on cada fila correspon a un element comprat per l'usuari amb sobrenom vc.usu.sobrenom
+		// columna 0: preu de l'element comprat, columna 1: tipus de l'element comprat
+		string comanda = "SELECT c.preuPagat, e.tipus ";  
 		comanda += "FROM public.\'compra c\', \'elementcompra e\' ";
 		comanda += "WHERE c.usuari = \'" + vc.obteSobrenomUsuari() + "\'";
 		comanda += "AND e.nom = c.element ";
@@ -143,13 +145,13 @@ void infoCompres(Videoconsola& vc) {
 			for (size_t i = 0; i < result.size(); ++i) {
 				eurosGastats += atof(result[i][0].c_str());
 				if (result[i][1].c_str() == "videojoc") ++videojocsComprats;
-				else ++paquetsComprats; 
+				else ++paquetsComprats; // tipus = "paquet"
 			}
 
 			std::cout << videojocsComprats << " videojoc";
-			if (videojocsComprats != 1) std::cout << "s";
+			if (videojocsComprats != 1) std::cout << "s"; 
 			std::cout << " comprat";
-			if (videojocsComprats != 1) std::cout << "s";
+			if (videojocsComprats != 1) std::cout << "s"; 
 
 			std::cout << endl << paquetsComprats << " paquet";
 			if (paquetsComprats != 1) std::cout << "s";
