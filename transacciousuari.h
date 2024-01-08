@@ -38,7 +38,8 @@ void modificarUsuari(Videoconsola& vc);
 
 // sn és el sobrenom de l'usuari del qual es volen canviar alguns atributs
 // camp és la columna/atribut que es vol modificar i novaInfo serà el nou valor d'aquest camp
-// a la BBDD l'usuari amb sobrenom sn queda modificat
-void modificarUsuariAux(std::string sn, std::string camp, std::string novaInfo);
+// error serà true si es vol canviar el correuElectronic per un ja existent
+// a la BBDD l'usuari amb sobrenom sn queda modificat si no hi ha errors
+void modificarUsuariAux(std::string sn, std::string camp, std::string novaInfo, bool& error);
 
 #endif
