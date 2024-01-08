@@ -131,12 +131,23 @@ int main() {
 							std::cin.ignore();
 							switch (opcio) {
 							case 1: std::cout << "** Consulta usuari **" << std::endl;
-								//consultarUsuari(vc);
-								//infoCompres(vc);
+								consultarUsuari(vc);
+								std::cout << std::endl;
+								infoCompres(vc);
 								break;
-							case 2: // codi de modificar usuari
+							case 2: std::cout << "** Modifica usuari **" << std::endl;
+								consultarUsuari(vc);
+								std::cin.peek() == '\n';
+								modificarUsuari(vc);
+								std::cin.peek() == '\n';
+								consultarUsuari(vc);
 								break;
-							case 3: // codi de esborrar usuari
+							case 3: std::cout << "** Esborrar usuari **" << std::endl;
+								std::cout << "Per confirmar l'esborrat, s'ha d'entrar la contrasenya..." << std::endl;
+								std::cout << "Contrasenya: ";
+								std::string ct;
+								std::cin >> ct;
+								esborraUsuari(vc, ct);
 								break;
 							case 4: gestioUsuari = false;
 								break;
