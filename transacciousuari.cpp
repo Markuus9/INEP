@@ -174,3 +174,110 @@ void infoCompres(Videoconsola& vc) {
 		std::cerr << "Error: " << e.what() << std::endl;
 	}
 }
+
+void esborraUsuari(Videoconsola& vc, std::string ct) {
+	if (ct != vc.obteContrasenyaUsuari()) {
+		std::cout << "La contrasenya no és correcta" << std::endl;
+	}
+	else {
+		try {
+			pqxx::connection conn("dbname=SistemaGestioVideojocs user=postgres password=inep2023 hostaddr = 127.0.0.1 port = 5432");
+			if (conn.is_open()) {
+				std::cout << "Connexi� exitosa amb la base de dades." << std::endl <<
+					std::endl;
+			}
+			else {
+				std::cerr << "Error de connexi� amb la base de dades." << std::endl <<
+					std::endl;
+			}
+			pqxx::work txn(conn);
+
+			string comanda = "DELETE FROM usuari ";
+			comanda += "WHERE sobrenom = \'" + vc.obteSobrenomUsuari() + "\'";
+			pqxx::result result = txn.exec(comanda);
+			try {
+				std::cout << "Usuari esborrat correctament!" << std::endl;
+			}
+			catch (const char* err) {
+				std::cout << err << endl;
+			}
+			// Confirmar la transacci�:
+			txn.commit();
+		}
+		catch (const std::exception& e) {
+			std::cerr << "Error: " << e.what() << std::endl;
+		}
+	}
+}
+
+void modificarUsuari(Videoconsola& vc) {
+	std::cout << "Omplir la informacio que es vol modificar..." << std::endl;
+	std::string novaInfo;
+	bool error = false;
+	std::cout << "Nom complet: ";
+	if (std::cin.peek() != '\n';) {
+		std::cin >> novaInfo;
+		vc.modificarNomUsuari(novaInfo);
+		modificarUsuariAux(vc.obteNomUsuari(), "nom", novaInfo, error);
+		std::cout << std::endl;
+	}
+	std::cout << "Contrasenya: ";
+	if (std::cin.peek() != '\n';) {
+		std::cin >> novaInfo;
+		vc.modificarContrasenyaUsuari(novaInfo);
+		modificarUsuariAux(vc.obteContrasenyaUsuari(), "contrasenya", novaInfo, error);
+		std::cout << std::endl;
+	}
+	std::cout << "Correu electronic: ";
+	if (std::cin.peek() != '\n';) {
+		std::cin >> novaInfo;
+		vc.modificarCorreuElectronicUsuari(novaInfo);
+		modificarUsuariAux(vc.obteCorreuElectronicUsuari(), "correuElectronic", novaInfo, error);
+		std::cout << std::endl;
+	}
+	if (error) return;
+	std::cout << "Data de naixement (DD/MM/AAAA): ";
+	if (std::cin.peek() != '\n';) {
+		std::cin >> novaInfo;
+		vc.modificarDataNaixementUsuari(novaInfo);
+		modificarUsuariAux(vc.obteSobrenomUsuari(), "dataNaixement", novaInfo, error);
+		std::cout << std::endl;
+	}
+	std::cout << "** Dades usuari modificades **" << std::endl;
+}
+
+void modificarUsuariAux(std::string sn, std::string camp, std::string novaInfo, bool& error) {
+	try {
+		pqxx::connection conn("dbname=SistemaGestioVideojocs user=postgres password=inep2023 hostaddr = 127.0.0.1 port = 5432");
+		if (conn.is_open()) {
+			std::cout << "Connexi� exitosa amb la base de dades." << std::endl <<
+				std::endl;
+		}
+		else {
+			std::cerr << "Error de connexi� amb la base de dades." << std::endl <<
+				std::endl;
+		}
+		pqxx::work txn(conn);
+		string comanda;
+		if (camp == "correuElectronic") {
+			comanda = "SELECT correuElectronic FROM public.\"Usuari\" WHERE correuElectronic = ";
+			comanda += "\'" + novaInfo + "\'";
+			pqxx::result result = txn.exec(comanda);
+			if (result.size() != 0) error = true;
+		}
+		if (error) std::cout << "El correu electronic ja existeix";
+		else {
+			comanda = "UPDATE Usuari FROM public.";
+			comanda += " SET \'" + camp + "\' = \'" + novaInfo "\'";
+			comanda += " WHERE sobrenom = \'" + sn + "\'";
+			pqxx::result result = txn.exec(comanda);
+			// Confirmar la transacci�:
+			txn.commit();
+		}
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Error: " << e.what() << std::endl;
+	}
+}
+
+
