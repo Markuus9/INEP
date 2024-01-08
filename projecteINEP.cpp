@@ -10,6 +10,9 @@
 #include <fstream>
 #include "Videoconsola.h"
 #include "transacciousuari.h"
+#include "transacciocompra.h"
+#include "transaccioconsulta.h"
+#include "projecteINEP.h"
 using namespace std;
 int main() {
 	try {
@@ -17,7 +20,10 @@ int main() {
 		// per confirmar el port heu de mirar en el pgAdmin, a les properties hi ha una pestanya "Connection"
 		// l'usuari postgres és el superusuari que s'ha creat durant la instal·lació del postgreSQL
 		// heu de posar la contrasenya que heu escollit durant el procés d'instal·lació
-		std::ifstream arxiu("(INSERTA AQUÍ LA RUTA PARA LLEGAR AL ARCHIVO DE CONFIGURACIÓN EXTERNO");
+		// Fem una primera connexió amb la base de dades per garantir que totes les funcions que el programa
+		// farà servir podran connectar-se a la base de dades. Si la connexió dóna error, no es podrà executar
+		// el programa.
+		std::ifstream arxiu("C:\\Users\\mario\\Desktop\\UPC\\INEP\\arxiu_configuracio.txt");
 		std::string arxcon;
 		std::getline(arxiu, arxcon);
 		pqxx::connection conn(arxcon);
@@ -45,12 +51,12 @@ int main() {
 			std::cout << "2. Registrar usuari" << std::endl;
 			std::cout << "3. Sortir" << std::endl;
 			std::cout << "Opcio: ";
-			std::cin >> opcio;
 			std::string n, sn, ct, ce, dn;
-			switch (opcio) {
+			if (std::cin >> opcio) {
+				std::cin.ignore();
+				switch (opcio) {
 				case 1: std::cout << "** Inici sessio **" << std::endl;
 					std::cout << "Sobrenom: ";
-					std::cin.ignore();
 					std::getline(cin, sn);
 					std::cout << "Contrasenya: ";
 					std::getline(cin, ct);
@@ -59,7 +65,6 @@ int main() {
 				case 2: std::cout << "** Registrar usuari **" << std::endl;
 					std::cout << "Omplir la informacio que es demana..." << endl;
 					std::cout << "Nom complet: ";
-					std::cin.ignore();
 					std::getline(cin, n);
 					std::cout << "Sobrenom: ";
 					std::getline(cin, sn);
@@ -73,6 +78,11 @@ int main() {
 					break;
 				case 3: fi = true;
 					break;
+				}
+			}
+			else {
+				cin.clear(); // Elimina totes les flags d'error
+				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
 			}
 
 			// Usuari loggejat
@@ -89,8 +99,8 @@ int main() {
 				std::cout << "4. Tancar sessio" << std::endl;
 				std::cout << "5. Sortir" << std::endl;
 				std::cout << "Opcio: ";
-				std::cin >> opcio;
-				switch (opcio) {
+				if (std::cin >> opcio) {
+					switch (opcio) {
 					case 1: gestioUsuari = true;
 						break;
 					case 2: gestioCompres = true;
@@ -101,8 +111,12 @@ int main() {
 						break;
 					case 5: fi = true;
 						break;
+					}
 				}
-
+				else {
+					cin.clear(); // Elimina totes les flags d'error
+					cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
+				}
 				if (vc.obteEstatSessio() and (not fi)) {
 					while (gestioUsuari) {
 						std::cout << "--------------------" << std::endl;
@@ -113,28 +127,24 @@ int main() {
 						std::cout << "3. Esborrar usuari" << std::endl;
 						std::cout << "4. Tornar" << std::endl;
 						std::cout << "Opcio: ";
-						std::cin >> opcio;
-						switch (opcio) {
+						if (std::cin >> opcio) {
+							std::cin.ignore();
+							switch (opcio) {
 							case 1: std::cout << "** Consulta usuari **" << std::endl;
-								consultarUsuari(vc);
-								infoCompres(vc);
+								//consultarUsuari(vc);
+								//infoCompres(vc);
 								break;
-							case 2: std::cout << "** Modifica usuari **" << std::endl;
-								consultarUsuari(vc);
-								std::cin.peek() == '\n';
-								modificarUsuari(vc);
-								std::cin.peek() == '\n';
-								consultarUsuari(vc);
+							case 2: // codi de modificar usuari
 								break;
-							case 3: std::cout << "** Esborrar usuari **" << std::endl;
-								std::cout << "Per confirmar l'esborrat, s'ha d'entrar la contrasenya..." << std::endl;
-								std::cout << "Contrasenya: ";
-								std::string ct;
-								std::cin >> ct;
-								esborraUsuari(vc, ct);
+							case 3: // codi de esborrar usuari
 								break;
 							case 4: gestioUsuari = false;
 								break;
+							}
+						}
+						else {
+							cin.clear(); // Elimina totes les flags d'error
+							cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
 						}
 					}
 
@@ -147,17 +157,32 @@ int main() {
 						std::cout << "3. Consultar compres" << std::endl;
 						std::cout << "4. Tornar" << std::endl;
 						std::cout << "Opcio: ";
-						std::cin >> opcio;
-						switch (opcio) {
-							case 1: // codi de Comprar videojoc
+						if (std::cin >> opcio) {
+							std::cin.ignore();
+							std::string nom;
+							switch (opcio) {
+							case 1: std::cout << "** Comprar videojoc **" << endl;
+								std::cout << "Nom videojoc: ";
+								std::getline(cin, nom);
+								comprarVideojoc(nom);
 								break;
-							case 2: // codi de Comprar paquet videojoc
+							case 2: std::cout << "** Comprar paquet **" << endl;
+								std::cout << "Nom paquet: ";
+								std::getline(cin, nom);
+								comprarPaquet(nom);
 								break;
-							case 3: // codi de Consultar compres
+							case 3: std::cout << "** Consultar compres **" << endl;
+								consultarCompres();
 								break;
 							case 4: gestioCompres = false;
 								break;
+							}
 						}
+						else {
+							cin.clear(); // Elimina totes les flags d'error
+							cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
+						}
+
 					}
 
 					while (consultesVideojocs) {
@@ -172,73 +197,101 @@ int main() {
 						std::cout << "6. Consultar paquets videojocs" << std::endl;
 						std::cout << "7. Tornar" << std::endl;
 						std::cout << "Opcio: ";
-						std::cin >> opcio;
-						switch (opcio) {
-							case 1: // codi de Consultar videojoc
+						if (std::cin >> opcio) {
+							std::cin.ignore();
+							std::string consulta;
+							switch (opcio) {
+							case 1: std::cout << "** Consultar videojoc **" << endl;
+								std::cout << "Nom videojoc: ";
+								std::getline(cin, consulta);
+								consultarVideojoc(consulta, true);
 								break;
-							case 2: // codi de Consultar videojocs
+							case 2: std::cout << "** Consultar videojocs **" << endl;
+								consultarVideojocs();
 								break;
-							case 3: // codi de Consultar videojoc per edat
+							case 3: std::cout << "** Consultar videojocs per edat **" << endl;
+								int edat;
+								std::cout << "Edat maxima (en anys): ";
+								if (std::cin >> edat and edat > 0) {
+									cin.ignore();
+									consultarVideojocsPerEdat(edat);
+								}
+								else {
+									cin.clear(); // Elimina totes les flags d'error
+									cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
+									std::cout << "Edat invalida. S'ha d'introduir un numero major que 0." << endl;
+								}
 								break;
-							case 4: // codi de Consultar novetats videojocs
+							case 4: std::cout << "** Consultar novetats **" << endl;
+								std::cout << "Data (AAAA-MM-DD): ";
+								std::getline(cin, consulta);
+								consultarNovetatsVideojocs(consulta);
 								break;
-							case 5: // codi de Consultar paquet videojocs
+							case 5: std::cout << "** Consultar paquet **" << endl;
+								std::cout << "Nom paquet: ";
+								std::getline(cin, consulta);
+								consultarPaquet(consulta);
 								break;
-							case 6: // codi de Consultar paquets videojocs
+							case 6: std::cout << "** Consultar paquets **" << endl;
+								consultarPaquets();
 								break;
 							case 7: consultesVideojocs = false;
 								break;
+							}
+						}
+						else {
+							cin.clear(); // Elimina totes les flags d'error
+							cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
 						}
 					}
-				}		
-			}
-			
-		}
-
-		/* Comandos de prueba
-		// 2.- s'executa una comanda en SQL que correspon a la consulta
-		pqxx::result result = txn.exec("SELECT * FROM public.\"Usuari\"");
-		// si a l'executar us dóna el missatge que no troba la taula, potser necessiteu posar :
-		// "SELECT * FROM public.musics" o ""SELECT * FROM public.\"MUSICS\"
-			// podeu confirmar la sintaxi de la comanda en el pgAdmin, sobre la taula escollir la opció Scripts\SELECT Script
-			// Per mostrar el resultat de la consulta, hem de recórrer les files
-			// (primer for) ...
-			std::cout << "--------------------------------------------" << std::endl;
-			std::cout << "Opció de recorrer el resultat amb dos loops" << std::endl;
-		std::cout << "-------------------------------------------" << std::endl;
-		for (const auto& row : result) {
-			// ... i per cada fila, es recorren els camps (l'ordre és el que es veu a les columnes al pgAdmin
-				for (const auto& field : row) {
-					std::cout << field.name() << ": " << field.c_str() << "\t";
 				}
-			std::cout << std::endl;
-		}
-		// també es poden recórrer els resultats com si fosin una matriu de files i columnes(amb indexos començant per 0)
-		std::cout << "---------------------------------------------" << std::endl;
-		std::cout << "Opció de recorrer el resultat com una matriu" << std::endl;
-		std::cout << "---------------------------------------------" << std::endl;
-		for (size_t i = 0; i < result.size(); ++i) {
-			for (size_t j = 0; j < result[i].size(); ++j) {
-				std::cout << result[i][j].name() << ": " << result[i][j].c_str() <<
-					"\t";
 			}
-			std::cout << std::endl;
-		}
-		std::cout << "---------------------------------------------" << std::endl;
-		std::cout << "PROVA2: Opció de recorrer el NOU resultat com una matriu" << std::endl;
-		std::cout << "---------------------------------------------" << std::endl;
-		result = txn.exec("SELECT sobrenom FROM public.\"Usuari\"");
-		for (size_t i = 0; i < result.size(); ++i) {
-			for (size_t j = 0; j < result[i].size(); ++j) {
-				std::cout << result[i][j].name() << ": " << result[i][j].c_str() <<
-					"\t";
+
+			/* Comandos de prueba
+			// 2.- s'executa una comanda en SQL que correspon a la consulta
+			pqxx::result result = txn.exec("SELECT * FROM public.\"Usuari\"");
+			// si a l'executar us dóna el missatge que no troba la taula, potser necessiteu posar :
+			// "SELECT * FROM public.musics" o ""SELECT * FROM public.\"MUSICS\"
+				// podeu confirmar la sintaxi de la comanda en el pgAdmin, sobre la taula escollir la opció Scripts\SELECT Script
+				// Per mostrar el resultat de la consulta, hem de recórrer les files
+				// (primer for) ...
+				std::cout << "--------------------------------------------" << std::endl;
+				std::cout << "Opció de recorrer el resultat amb dos loops" << std::endl;
+			std::cout << "-------------------------------------------" << std::endl;
+			for (const auto& row : result) {
+				// ... i per cada fila, es recorren els camps (l'ordre és el que es veu a les columnes al pgAdmin
+					for (const auto& field : row) {
+						std::cout << field.name() << ": " << field.c_str() << "\t";
+					}
+				std::cout << std::endl;
 			}
-			std::cout << std::endl;
+			// també es poden recórrer els resultats com si fosin una matriu de files i columnes(amb indexos començant per 0)
+			std::cout << "---------------------------------------------" << std::endl;
+			std::cout << "Opció de recorrer el resultat com una matriu" << std::endl;
+			std::cout << "---------------------------------------------" << std::endl;
+			for (size_t i = 0; i < result.size(); ++i) {
+				for (size_t j = 0; j < result[i].size(); ++j) {
+					std::cout << result[i][j].name() << ": " << result[i][j].c_str() <<
+						"\t";
+				}
+				std::cout << std::endl;
+			}
+			std::cout << "---------------------------------------------" << std::endl;
+			std::cout << "PROVA2: Opció de recorrer el NOU resultat com una matriu" << std::endl;
+			std::cout << "---------------------------------------------" << std::endl;
+			result = txn.exec("SELECT sobrenom FROM public.\"Usuari\"");
+			for (size_t i = 0; i < result.size(); ++i) {
+				for (size_t j = 0; j < result[i].size(); ++j) {
+					std::cout << result[i][j].name() << ": " << result[i][j].c_str() <<
+						"\t";
+				}
+				std::cout << std::endl;
+			}
+			*/
+			// Finalment, s'ha de confirmar la transacción
+			txn.commit();
+			// La connexió es tanca automàticament al sortir del try
 		}
-		*/
-		// Finalment, s'ha de confirmar la transacción
-		txn.commit();
-		// La connexió es tanca automàticament al sortir del try
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
