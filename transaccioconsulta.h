@@ -9,50 +9,50 @@
 #include <pqxx/pqxx>
 using namespace std;
 
-// Si existeix a la base de dades algun videojoc amb nom "nomv", es mostra tota la informaciÛ
-// del videojoc. La informaciÛ que es mostra Ès el nom, descripciÛ, preu, qualificaciÛ per edats,
-// gËnere, data de llanÁament i temps estimat (si en tÈ). Si el videojoc est‡ algun paquet i
-// "mostrarpaquets" Ès true, es mostra el nom dels paquets en els quals el videojoc est‡.
-// Si "nomv" no correspon al nom de un videojoc de la base de dades, es retornar‡ false.
-// Altrament es retornar‡ true.
+// Si existeix a la base de dades algun videojoc amb nom "nomv", es mostra tota la informaci√≥
+// del videojoc. La informaci√≥ que es mostra √©s el nom, descripci√≥, preu, qualificaci√≥ per edats,
+// g√®nere, data de llan√ßament i temps estimat (si en t√©). Si el videojoc est√† algun paquet i
+// "mostrarpaquets" √©s true, es mostra el nom dels paquets en els quals el videojoc est√†.
+// Si "nomv" no correspon al nom de un videojoc de la base de dades, es retornar√† false.
+// Altrament es retornar√† true.
 bool consultarVideojoc(std::string nomv, bool mostrarpaquets);
 
 
-// Aquesta funciÛ tÈ el mateix funcionament que la funciÛ "consultarVideojoc", pero la informaciÛ
-// del videojoc es mostra sense fer salts de lÌnia.
+// Aquesta funci√≥ t√© el mateix funcionament que la funci√≥ "consultarVideojoc", pero la informaci√≥
+// del videojoc es mostra sense fer salts de l√≠nia.
 bool consultarVideojocCompactat(std::string nomv, bool mostrarpaquets);
 
 
-// Mostra tota la informaciÛ de tots els videojocs de la base de dades. La informaciÛ que
-// es mostra de cada videojoc Ès el nom, descripciÛ, preu, qualificaciÛ per edats,
-// gËnere, data de llanÁament i temps estimat (si en tÈ). Si el videojoc est‡ algun paquet i
-// "mostrarpaquets" Ès true, es mostra el nom dels paquets en els quals el videojoc est‡.
-// Aquesta llista es mostra ordenada descendentment per data llanÁament.
+// Mostra tota la informaci√≥ de tots els videojocs de la base de dades. La informaci√≥ que
+// es mostra de cada videojoc √©s el nom, descripci√≥, preu, qualificaci√≥ per edats,
+// g√®nere, data de llan√ßament i temps estimat (si en t√©). Tamb√© es mostra el nom dels paquets
+// en els quals el videojoc est√†.
+// Aquesta llista es mostra ordenada descendentment per data llan√ßament.
 void consultarVideojocs();
 
-// Pre: "e" Ès un enter major que 0
-// Mostra tota la informaciÛ dels videojocs apropiats per líedat indicada per "e", Ès a dir, tots
-// els jocs on la qualificaciÛ díedat sigui mÈs petita o igual a "e" La llista de jocs estar‡ ordenada
-// descendentment per la qualificaciÛ díedat i data de llanÁament. La informaciÛ del videojoc que es mostra
-// Ès el nom, descripciÛ, preu, qualificaciÛ per edat, gËnere, data de llanÁament i temps estimat (si en tÈ).
-// Si el videojoc est‡ en algun paquet, es mostra el nom dels paquets en els quals el videojoc est‡.
+// Pre: "e" √©s un enter major que 0
+// Mostra tota la informaci√≥ dels videojocs apropiats per l‚Äôedat indicada per "e", √©s a dir, tots
+// els jocs on la qualificaci√≥ d‚Äôedat sigui m√©s petita o igual a "e" La llista de jocs estar√† ordenada
+// descendentment per la qualificaci√≥ d‚Äôedat i data de llan√ßament. La informaci√≥ del videojoc que es mostra
+// √©s el nom, descripci√≥, preu, qualificaci√≥ per edat, g√®nere, data de llan√ßament i temps estimat (si en t√©).
+// Si el videojoc est√† en algun paquet, es mostra el nom dels paquets en els quals el videojoc est√†.
 void consultarVideojocsPerEdat(int e);
 
-// Mostra tota la informaciÛ dels videojocs que la seva data de llanÁament sigui mÈs gran o igual a la data
-// introduÔda. Si "data" Ès un string buit, es mostrar‡ tota la informaciÛ dels videojocs amb data de llanÁament
-// mÈs gran que la data d'avui. La informaciÛ del videojoc que es mostra Ès el nom, descripciÛ, preu, qualificaciÛ 
-// per edat, data de llanÁament i temps estimat (si en tÈ). Si el videojoc est‡ en algun paquet, es mostra el nom
-// dels paquets en els quals el videojoc est‡. La llista de videojoc estar‡ ordenada descendentment per data.
+// Mostra tota la informaci√≥ dels videojocs que la seva data de llan√ßament sigui m√©s gran o igual a la data
+// introdu√Øda. Si "data" √©s un string buit, es mostrar√† tota la informaci√≥ dels videojocs amb data de llan√ßament
+// m√©s gran que la data d'avui. La informaci√≥ del videojoc que es mostra √©s el nom, descripci√≥, preu, qualificaci√≥ 
+// per edat, data de llan√ßament i temps estimat (si en t√©). Si el videojoc est√† en algun paquet, es mostra el nom
+// dels paquets en els quals el videojoc est√†. La llista de videojoc estar√† ordenada descendentment per data.
 void consultarNovetatsVideojocs(std::string data);
 
-// Si a la base de dades existeix algun paquet de videojocs de nom "nomp", es mostra el nom, descripciÛ i preu del
-// paquet i l'estalvi en relacio a comprar tots els videojocs que contÈ per separat. TambÈ es mostra una llista dels
-// noms, descripcions i preus de tots els videojocs que contÈ el paquet ordenats ascendentment per nom. Retorna true
+// Si a la base de dades existeix algun paquet de videojocs de nom "nomp", es mostra el nom, descripci√≥ i preu del
+// paquet i l'estalvi en relacio a comprar tots els videojocs que cont√© per separat. Tamb√© es mostra una llista dels
+// noms, descripcions i preus de tots els videojocs que cont√© el paquet ordenats ascendentment per nom. Retorna true
 // si "nomp" correspon al nom d'un paquet de videojocs de la base de dades. Altrament retorna false.
 bool consultarPaquet(std::string nomp);
 
-// Mostra el nom, descripciÛ, preu de tots els paquets de la base de dades. Per a cada paquet tambÈ es mostra
-// l'estalvi (en euros) en relaciÛ amb comprar els videojocs que contÈ per separat.
+// Mostra el nom, descripci√≥, preu de tots els paquets de la base de dades. Per a cada paquet tamb√© es mostra
+// l'estalvi (en euros) en relaci√≥ amb comprar els videojocs que cont√© per separat.
 void consultarPaquets();
 
 
