@@ -43,7 +43,8 @@ int main() {
 		Videoconsola& vc = Videoconsola::getInstance();
 		int opcio;
 		bool fi = false;
-		while (vc.obteEstatSessio() == false and fi != true) {
+		
+		while ((not vc.obteEstatSessio()) and (not fi)) {
 			std::cout << "******************" << std::endl;
 			std::cout << "  Menu Principal  " << std::endl;
 			std::cout << "******************" << std::endl;
@@ -55,37 +56,36 @@ int main() {
 			if (std::cin >> opcio) {
 				std::cin.ignore();
 				switch (opcio) {
-				case 1: std::cout << "** Inici sessio **" << std::endl;
-					std::cout << "Sobrenom: ";
-					std::getline(cin, sn);
-					std::cout << "Contrasenya: ";
-					std::getline(cin, ct);
-					iniciSessio(sn, ct);
-					break;
-				case 2: std::cout << "** Registrar usuari **" << std::endl;
-					std::cout << "Omplir la informacio que es demana..." << endl;
-					std::cout << "Nom complet: ";
-					std::getline(cin, n);
-					std::cout << "Sobrenom: ";
-					std::getline(cin, sn);
-					std::cout << "Contrasenya: ";
-					std::getline(cin, ct);
-					std::cout << "Correu electronic: ";
-					std::getline(cin, ce);
-					std::cout << "Data naixement (AAAA-MM-DD): ";
-					std::getline(cin, dn);
-					registrarUsuari(n, sn, ct, ce, dn);
-					break;
-				case 3: fi = true;
-					break;
+					case 1: std::cout << "** Inici sessio **" << std::endl;
+						std::cout << "Sobrenom: ";
+						std::getline(cin, sn);
+						std::cout << "Contrasenya: ";
+						std::getline(cin, ct);
+						iniciSessio(sn, ct);
+						break;
+					case 2: std::cout << "** Registrar usuari **" << std::endl;
+						std::cout << "Omplir la informacio que es demana..." << endl;
+						std::cout << "Nom complet: ";
+						std::getline(cin, n);
+						std::cout << "Sobrenom: ";
+						std::getline(cin, sn);
+						std::cout << "Contrasenya: ";
+						std::getline(cin, ct);
+						std::cout << "Correu electronic: ";
+						std::getline(cin, ce);
+						std::cout << "Data naixement (AAAA-MM-DD): ";
+						std::getline(cin, dn);
+						registrarUsuari(n, sn, ct, ce, dn);
+						break;
+					case 3: fi = true;
+						break;
 				}
 			}
 			else {
 				cin.clear(); // Elimina totes les flags d'error
 				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
 			}
-
-			// Usuari loggejat
+			
 			while (vc.obteEstatSessio() and (not fi)) {
 				std::cout << "******************" << std::endl;
 				std::cout << "  Menu Principal  " << std::endl;
@@ -101,22 +101,23 @@ int main() {
 				std::cout << "Opcio: ";
 				if (std::cin >> opcio) {
 					switch (opcio) {
-					case 1: gestioUsuari = true;
-						break;
-					case 2: gestioCompres = true;
-						break;
-					case 3: consultesVideojocs = true;
-						break;
-					case 4: vc.canviaEstatSessio(false);
-						break;
-					case 5: fi = true;
-						break;
+						case 1: gestioUsuari = true;
+							break;
+						case 2: gestioCompres = true;
+							break;
+						case 3: consultesVideojocs = true;
+							break;
+						case 4: vc.canviaEstatSessio(false);
+							break;
+						case 5: fi = true;
+							break;
 					}
 				}
 				else {
 					cin.clear(); // Elimina totes les flags d'error
 					cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
 				}
+				
 				if (vc.obteEstatSessio() and (not fi)) {
 					while (gestioUsuari) {
 						std::cout << "--------------------" << std::endl;
@@ -129,28 +130,33 @@ int main() {
 						std::cout << "Opcio: ";
 						if (std::cin >> opcio) {
 							std::cin.ignore();
+							std::string ct;
+							bool ctCorrecte = true;
 							switch (opcio) {
-							case 1: std::cout << "** Consulta usuari **" << std::endl;
-								consultarUsuari(vc);
-								std::cout << std::endl;
-								infoCompres(vc);
-								break;
-							case 2: std::cout << "** Modifica usuari **" << std::endl;
-								consultarUsuari(vc);
-								std::cin.peek() == '\n';
-								modificarUsuari(vc);
-								std::cin.peek() == '\n';
-								consultarUsuari(vc);
-								break;
-							case 3: std::cout << "** Esborrar usuari **" << std::endl;
-								std::cout << "Per confirmar l'esborrat, s'ha d'entrar la contrasenya..." << std::endl;
-								std::cout << "Contrasenya: ";
-								std::string ct;
-								std::cin >> ct;
-								esborraUsuari(vc, ct);
-								break;
-							case 4: gestioUsuari = false;
-								break;
+								case 1: std::cout << "** Consulta usuari **" << std::endl;
+									consultarUsuari(vc);
+									std::cout << std::endl;
+									infoCompres(vc);
+									break;
+								case 2: std::cout << "** Modifica usuari **" << std::endl;
+									consultarUsuari(vc);
+									std::cin.peek() == '\n';
+									modificarUsuari(vc);
+									std::cin.peek() == '\n';
+									consultarUsuari(vc);
+									break;
+								case 3: std::cout << "** Esborrar usuari **" << std::endl;
+									std::cout << "Per confirmar l'esborrat, s'ha d'entrar la contrasenya..." << std::endl;
+									std::cout << "Contrasenya: ";
+									ct = confirmarContrasenya();
+									esborraUsuari(vc, ct, ctCorrecte);
+									if (ctCorrecte) {
+										gestioUsuari = false;
+										vc.canviaEstatSessio(false);
+									}
+									break;
+								case 4: gestioUsuari = false;
+									break;
 							}
 						}
 						else {
@@ -158,7 +164,7 @@ int main() {
 							cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
 						}
 					}
-
+					
 					while (gestioCompres) {
 						std::cout << "--------------------" << std::endl;
 						std::cout << "  Gestionar compres  " << std::endl;
@@ -172,30 +178,28 @@ int main() {
 							std::cin.ignore();
 							std::string nom;
 							switch (opcio) {
-							case 1: std::cout << "** Comprar videojoc **" << endl;
-								std::cout << "Nom videojoc: ";
-								std::getline(cin, nom);
-								comprarVideojoc(nom);
-								break;
-							case 2: std::cout << "** Comprar paquet **" << endl;
-								std::cout << "Nom paquet: ";
-								std::getline(cin, nom);
-								comprarPaquet(nom);
-								break;
-							case 3: std::cout << "** Consultar compres **" << endl;
-								consultarCompres();
-								break;
-							case 4: gestioCompres = false;
-								break;
+								case 1: std::cout << "** Comprar videojoc **" << endl;
+									std::cout << "Nom videojoc: ";
+									std::getline(cin, nom);
+									comprarVideojoc(nom);
+									break;
+								case 2: std::cout << "** Comprar paquet **" << endl;
+									std::cout << "Nom paquet: ";
+									std::getline(cin, nom);
+									comprarPaquet(nom);
+									break;
+								case 3: std::cout << "** Consultar compres **" << endl;
+									consultarCompres();
+									break;
+								case 4: gestioCompres = false;
+									break;
 							}
 						}
 						else {
 							cin.clear(); // Elimina totes les flags d'error
 							cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
 						}
-
 					}
-
 					while (consultesVideojocs) {
 						std::cout << "--------------------" << std::endl;
 						std::cout << "  Consultes videojocs  " << std::endl;
@@ -212,42 +216,42 @@ int main() {
 							std::cin.ignore();
 							std::string consulta;
 							switch (opcio) {
-							case 1: std::cout << "** Consultar videojoc **" << endl;
-								std::cout << "Nom videojoc: ";
-								std::getline(cin, consulta);
-								consultarVideojoc(consulta, true);
-								break;
-							case 2: std::cout << "** Consultar videojocs **" << endl;
-								consultarVideojocs();
-								break;
-							case 3: std::cout << "** Consultar videojocs per edat **" << endl;
-								int edat;
-								std::cout << "Edat maxima (en anys): ";
-								if (std::cin >> edat and edat > 0) {
-									cin.ignore();
-									consultarVideojocsPerEdat(edat);
-								}
-								else {
-									cin.clear(); // Elimina totes les flags d'error
-									cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
-									std::cout << "Edat invalida. S'ha d'introduir un numero major que 0." << endl;
-								}
-								break;
-							case 4: std::cout << "** Consultar novetats **" << endl;
-								std::cout << "Data (AAAA-MM-DD): ";
-								std::getline(cin, consulta);
-								consultarNovetatsVideojocs(consulta);
-								break;
-							case 5: std::cout << "** Consultar paquet **" << endl;
-								std::cout << "Nom paquet: ";
-								std::getline(cin, consulta);
-								consultarPaquet(consulta);
-								break;
-							case 6: std::cout << "** Consultar paquets **" << endl;
-								consultarPaquets();
-								break;
-							case 7: consultesVideojocs = false;
-								break;
+								case 1: std::cout << "** Consultar videojoc **" << endl;
+									std::cout << "Nom videojoc: ";
+									std::getline(cin, consulta);
+									consultarVideojoc(consulta, true);
+									break;
+								case 2: std::cout << "** Consultar videojocs **" << endl;
+									consultarVideojocs();
+									break;
+								case 3: std::cout << "** Consultar videojocs per edat **" << endl;
+									int edat;
+									std::cout << "Edat maxima (en anys): ";
+									if (std::cin >> edat and edat > 0) {
+										cin.ignore();
+										consultarVideojocsPerEdat(edat);
+									}
+									else {
+										cin.clear(); // Elimina totes les flags d'error
+										cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignora l'input
+										std::cout << "Edat invalida. S'ha d'introduir un numero major que 0." << endl;
+									}
+									break;
+								case 4: std::cout << "** Consultar novetats **" << endl;
+									std::cout << "Data (AAAA-MM-DD): ";
+									std::getline(cin, consulta);
+									consultarNovetatsVideojocs(consulta);
+									break;
+								case 5: std::cout << "** Consultar paquet **" << endl;
+									std::cout << "Nom paquet: ";
+									std::getline(cin, consulta);
+									consultarPaquet(consulta);
+									break;
+								case 6: std::cout << "** Consultar paquets **" << endl;
+									consultarPaquets();
+									break;
+								case 7: consultesVideojocs = false;
+									break;
 							}
 						}
 						else {
@@ -257,6 +261,7 @@ int main() {
 					}
 				}
 			}
+		}
 
 			/* Comandos de prueba
 			// 2.- s'executa una comanda en SQL que correspon a la consulta
@@ -302,7 +307,6 @@ int main() {
 			// Finalment, s'ha de confirmar la transacción
 			txn.commit();
 			// La connexió es tanca automàticament al sortir del try
-		}
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
