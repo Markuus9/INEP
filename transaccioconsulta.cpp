@@ -9,13 +9,13 @@ bool consultarVideojoc(std::string nomv, bool mostrarpaquets) {
 		std::string comanda = "SELECT nom, descripcio, preu FROM public.element_compra WHERE nom = ";
 		comanda = comanda + "'" + nomv + "' and tipus = 'videojoc'";
 		pqxx::result result = txn.exec(comanda);
-		// result tindr‡ una fila o cap
+		// result tindr√† una fila o cap
 		if (result.size() == 0 ) {
 			std::cout << "No existeix cap videojoc amb aquest nom." << endl;
 			return false;
 		}
 		else {
-			// Mostrem la informaciÛ del videojoc:
+			// Mostrem la informaci√≥ del videojoc:
 			std::string preujoc;
 			std::cout << "Informacio del videojoc:" << endl;
 			for (size_t j = 0; j < result[0].size(); ++j) {
@@ -27,11 +27,11 @@ bool consultarVideojoc(std::string nomv, bool mostrarpaquets) {
 					std::cout << "Descripcio: " << result[0][j].c_str() << "." << endl;
 				}
 				else if (camp == "preu") {
-					// El preu es mostrar‡ al final de la consulta
+					// El preu es mostrar√† al final de la consulta
 					preujoc = result[0][j].c_str();
 				}
 			}
-			comanda = "SELECT qualificacio_edat, data_llansament, mins_estimat, genere FROM public.Videojoc WHERE nom = ";
+			comanda = "SELECT qualificacio_edat, data_llansament, mins_estimat, genere FROM public.videojoc WHERE nom = ";
 			comanda = comanda + "\'" + nomv + "\'";
 			result = txn.exec(comanda);
 			for (size_t j = 0; j < result[0].size(); ++j) {
@@ -54,7 +54,7 @@ bool consultarVideojoc(std::string nomv, bool mostrarpaquets) {
 			}
 			std::cout << "Preu: " << preujoc << endl;
 			if (mostrarpaquets) {
-				comanda = "SELECT paquet FROM public.Conte WHERE videojoc = ";
+				comanda = "SELECT paquet FROM public.conte WHERE videojoc = ";
 				comanda = comanda + "\'" + nomv + "\'";
 				result = txn.exec(comanda);
 				if (result.size() > 0) {
@@ -69,7 +69,7 @@ bool consultarVideojoc(std::string nomv, bool mostrarpaquets) {
 				}
 			}
 		}
-		// Confirmar la transacciÛ:
+		// Confirmar la transacci√≥:
 		txn.commit();
 	}
 	catch (const std::exception& e) {
@@ -86,13 +86,13 @@ bool consultarVideojocCompactat(std::string nomv, bool mostrarpaquets) {
 		std::string comanda = "SELECT nom, tipus from public.element_compra WHERE nom = ";
 		comanda = comanda + "'" + nomv + "' and tipus = 'videojoc'";
 		pqxx::result result = txn.exec(comanda);
-		// result tindr‡ una fila o cap. Si tÈ una fila, nomÈs tindr‡ una columna amb el nom de l'element compra
+		// result tindr√† una fila o cap. Si t√© una fila, nom√©s tindr√† una columna amb el nom de l'element compra
 		if (result.size() == 0) {
 			std::cout << "No existeix cap videojoc amb aquest nom." << endl;
 			return false;
 		}
 		else {
-			// Mostrem la informaciÛ del videojoc:
+			// Mostrem la informaci√≥ del videojoc:
 			comanda = "SELECT nom, descripcio, preu FROM public.element_compra WHERE nom = ";
 			comanda = comanda + "\'" + nomv + "\'";
 			result = txn.exec(comanda);
@@ -123,10 +123,10 @@ bool consultarVideojocCompactat(std::string nomv, bool mostrarpaquets) {
 				}
 			}
 			if (mostrarpaquets) {
-				comanda = "SELECT paquet FROM public.Conte WHERE videojoc = ";
+				comanda = "SELECT paquet FROM public.conte WHERE videojoc = ";
 				comanda = comanda + "\'" + nomv + "\'";
 				result = txn.exec(comanda);
-				// result nomÈs tÈ una columna amb el nom de cada paquet on es trobi el videojoc
+				// result nom√©s t√© una columna amb el nom de cada paquet on es trobi el videojoc
 				// amb nom "nomv"
 				if (result.size() > 0) {
 					std::cout << "; Paquets:";
@@ -140,7 +140,7 @@ bool consultarVideojocCompactat(std::string nomv, bool mostrarpaquets) {
 			}
 			std::cout << endl;
 		}
-		// Confirmar la transacciÛ:
+		// Confirmar la transacci√≥:
 		txn.commit();
 	}
 	catch (const std::exception& e) {
@@ -153,16 +153,16 @@ void consultarVideojocs() {
 	try {
 		pqxx::connection conn("dbname=SistemaGestioVideojocs user=postgres password=inep2023 hostaddr = 127.0.0.1 port = 5432");
 		pqxx::work txn(conn);
-		// Obtenim tots els videojocs del sistema ordenats descendentment per data de llanÁament:
+		// Obtenim tots els videojocs del sistema ordenats descendentment per data de llan√ßament:
 		std::string comanda = "SELECT nom from videojoc ORDER BY data_llansament DESC";
 		pqxx::result result = txn.exec(comanda);
-		// Mostrem la informaciÛ de cada videojoc:
+		// Mostrem la informaci√≥ de cada videojoc:
 		for (size_t i = 0; i < result.size(); ++i) {
 			std::string nomjoc = result[i][0].c_str();
 			consultarVideojocCompactat(nomjoc, true);
 			std::cout << endl;
 		}
-		// Confirmar la transacciÛ:
+		// Confirmar la transacci√≥:
 		txn.commit();
 	}
 	catch (const std::exception& e) {
@@ -178,14 +178,14 @@ void consultarVideojocsPerEdat(int e) {
 		std::string comanda = "SELECT nom from videojoc WHERE qualificacio_edat <= ";
 		comanda = comanda + std::to_string(e) + " ORDER BY qualificacio_edat DESC, data_llansament DESC";
 		pqxx::result result = txn.exec(comanda);
-		// Mostrem la informaciÛ de cada videojoc amb una qualificaciÛ d'edat menor o igual a "e"
+		// Mostrem la informaci√≥ de cada videojoc amb una qualificaci√≥ d'edat menor o igual a "e"
 		for (size_t i = 0; i < result.size(); ++i) {
-			// result nomÈs tÈ una columna
+			// result nom√©s t√© una columna
 			std::string nomjoc = result[i][0].c_str();
 			consultarVideojocCompactat(nomjoc, true);
 			std::cout << endl;
 		}
-		// Confirmar la transacciÛ:
+		// Confirmar la transacci√≥:
 		txn.commit();
 	}
 	catch(const std::exception & e) {
@@ -200,28 +200,28 @@ void consultarNovetatsVideojocs(std::string data) {
 		std::string comanda = "SELECT nom from videojoc WHERE data_llansament >";
 		pqxx::result result;
 		if (data.size() == 0) {
-			// Si "data" Ès un string buit, es posar‡ a "data" la data en la que s'executa la funciÛ i
-			// es buscaran els videojocs amb data de llanÁament MAJOR que avui.
+			// Si "data" √©s un string buit, es posar√† a "data" la data en la que s'executa la funci√≥ i
+			// es buscaran els videojocs amb data de llan√ßament MAJOR que avui.
 			std::string comandadata = "SELECT current_date";
 			result = txn.exec(comandadata);
-			// result nomÈs tÈ una fila i una columna, que indica la data en la que s'executa la comanda
+			// result nom√©s t√© una fila i una columna, que indica la data en la que s'executa la comanda
 			data = result[0][0].c_str();
 		}
 		else {
-			// Si "data" no Ès un string buit, es buscaran els videojocs amb data de llanÁament major
+			// Si "data" no √©s un string buit, es buscaran els videojocs amb data de llan√ßament major
 			// O IGUAL a "data".
 			comanda = comanda + '=';
 		}
 		comanda = comanda + " '" + data + "' ORDER BY data_llansament DESC";
 		result = txn.exec(comanda);
-		// Mostrem la informaciÛ de cada videojoc que es troba a "result":
+		// Mostrem la informaci√≥ de cada videojoc que es troba a "result":
 		for (size_t i = 0; i < result.size(); ++i) {
-			// result nomÈs tÈ una columna
+			// result nom√©s t√© una columna
 			std::string nomjoc = result[i][0].c_str();
 			consultarVideojocCompactat(nomjoc, true);
 			std::cout << endl;
 		}
-		// Confirmar la transacciÛ:
+		// Confirmar la transacci√≥:
 		txn.commit();
 	}
 	catch (const std::exception& e) {
@@ -237,7 +237,7 @@ bool consultarPaquet(std::string nomp) {
 		std::string comanda = "SELECT nom, descripcio, preu FROM public.element_compra WHERE nom = ";
 		comanda = comanda + "'" + nomp + "' and tipus = 'paquet'";
 		pqxx::result result = txn.exec(comanda);
-		// result tindr‡ una fila o cap
+		// result tindr√† una fila o cap
 		if (result.size() == 0) {
 			std::cout << "No existeix cap paquet de videojocs amb aquest nom." << endl;
 			return false;
@@ -254,23 +254,23 @@ bool consultarPaquet(std::string nomp) {
 					std::cout << "Descripcio: " << result[0][j].c_str() << "." << endl;
 				}
 				else if (camp == "preu") {
-					// El preu es mostrar‡ just abans de mostrar els videojocs que contÈ el paquet
+					// El preu es mostrar√† just abans de mostrar els videojocs que cont√© el paquet
 					preupaq = atoi(result[0][j].c_str());
 				}
 			}
-			comanda = "SELECT preu_jocs FROM public.preu_jocs where nompaquet = ";
+			comanda = "SELECT preu_jocs FROM public.preu_jocs WHERE nompaquet = ";
 			comanda = comanda + "\'" + nomp + "\'";
 			result = txn.exec(comanda);
-			// result nomÈs contÈ una fila i una columna, i contÈ la suma del preu de tots els
-			// videojocs que contÈ el paquet de nom "n"
+			// result nom√©s cont√© una fila i una columna, i cont√© la suma del preu de tots els
+			// videojocs que cont√© el paquet de nom "n"
 			int preutotsjocspaquet = atoi(result[0][0].c_str());
 			std::cout << "Preu: " << preupaq << " (estalvi de " << preutotsjocspaquet - preupaq << " euros)" << endl;
 			std::cout << endl;
 			std::cout << "Jocs inclosos:" << endl;
-			comanda = "SELECT e.nom, e.descripcio, e.preu FROM Conte con, element_compra e WHERE con.videojoc = e.nom AND con.paquet = ";
+			comanda = "SELECT e.nom, e.descripcio, e.preu FROM conte con, element_compra e WHERE con.videojoc = e.nom AND con.paquet = ";
 			comanda = comanda + "\'" + nomp + "\' ORDER BY e.nom ASC";
 			pqxx::result resultatinfo = txn.exec(comanda);
-			// Mostrem el nom, descripciÛ i preu dels jocs que estan al paquet de nom "nompaquet":
+			// Mostrem el nom, descripci√≥ i preu dels jocs que estan al paquet de nom "nompaquet":
 			for (size_t i2 = 0; i2 < resultatinfo.size(); ++i2) {
 				std::string nomjoc = resultatinfo[i2][0].c_str();
 				std::cout << "-";
@@ -287,7 +287,7 @@ bool consultarPaquet(std::string nomp) {
 				std::cout << endl;
 			}
 		}
-		// Confirmar la transacciÛ:
+		// Confirmar la transacci√≥:
 		txn.commit();
 	}
 	catch (const std::exception& e) {
@@ -314,8 +314,8 @@ void consultarPaquets() {
 					std::string comanda = "SELECT preu_jocs FROM public.preu_jocs where nompaquet = ";
 					comanda = comanda + "\'" + result[i][j].c_str() + "\'";
 					pqxx::result resultatpreu = txn.exec(comanda);
-					// resultatpreu nomÈs contÈ una fila i una columna, i contÈ la suma del preu de tots els
-					// videojocs que contÈ el paquet de nom "n"
+					// resultatpreu nom√©s cont√© una fila i una columna, i cont√© la suma del preu de tots els
+					// videojocs que cont√© el paquet de nom "n"
 					preutotsjocspaquet = atoi(resultatpreu[0][0].c_str());
 				}
 				if (camp == "preu") {
@@ -326,7 +326,7 @@ void consultarPaquets() {
 			std::cout << " (estalvi de " << preutotsjocspaquet - preupaq << " euros)" << endl;
 		}
 		std::cout << endl;
-		// Confirmar la transacciÛ:
+		// Confirmar la transacci√≥:
 		txn.commit();
 	}
 	catch (const std::exception& e) {
