@@ -28,10 +28,6 @@ void consultarUsuari(Videoconsola& vc);
 // mostra el nombre de videojocs i paquets comprats i la quantitat d'euros gastats per vc.usu
 void infoCompres(Videoconsola& vc);
 
-// vc.usu és l'usuari loggejat i ct és la contrasenya demanada per esborrar
-// si la ct és vc.usu.contrasenya llavors s'elimina la fila d'usuari a la taula usuari de la BBDD
-void esborraUsuari(Videoconsola& vc, std::string ct);
-
 // vc.usu és l'usuari loggejat
 // vc.usu té un o més dels atributs següents modificats: nom, contrasenya, correuElectronic o dataNaixement
 void modificarUsuari(Videoconsola& vc);
@@ -41,5 +37,14 @@ void modificarUsuari(Videoconsola& vc);
 // error serà true si es vol canviar el correuElectronic per un ja existent
 // a la BBDD l'usuari amb sobrenom sn queda modificat si no hi ha errors
 void modificarUsuariAux(std::string sn, std::string camp, std::string novaInfo, bool& error);
+
+// vc.usu és l'usuari loggejat i ct és la contrasenya demanada per esborrar
+// si la ct no és vc.usu.contrasenya llavors ctCorrecte serà false
+// Altrament ctCorrecte és true i s'esborrarà l'usuari
+void esborraUsuari(Videoconsola& vc, std::string ct, bool& ctCorrecte);
+
+// es retorna la contrasenya posada per l'usuari per confirmar-la
+// quan la contrasenya és entrada no es mostra per pantalla per raons de seguretat
+std::string confirmarContrasenya();
 
 #endif
