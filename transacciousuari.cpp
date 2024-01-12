@@ -13,7 +13,7 @@ void iniciSessio(std::string sn, std::string ct) {
 				std::endl;
 		}
 		pqxx::work txn(conn);
-		string comanda = "SELECT contrasenya FROM public.\"Usuari\" WHERE sobrenom = ";
+		string comanda = "SELECT contrasenya FROM public.usuari WHERE sobrenom = ";
 		comanda = comanda + "\'" + sn + "\'";
 		pqxx::result result = txn.exec(comanda);
 		try {
@@ -27,7 +27,7 @@ void iniciSessio(std::string sn, std::string ct) {
 				v.canviaEstatSessio(true);
 				// Busquem la resta dels atributs de l'usuari per guardar la informació a la instància
 				// de Videoconsola:
-				string comanda = "SELECT * FROM public.\"Usuari\" WHERE sobrenom = ";
+				string comanda = "SELECT * FROM public.usuari WHERE sobrenom = ";
 				comanda = comanda + "\'" + sn + "\'";
 				pqxx::result result = txn.exec(comanda);
 				for (size_t i = 0; i < result.size(); ++i) {
@@ -76,7 +76,7 @@ void registrarUsuari(std::string n, std::string sn, std::string ct, std::string 
 		}
 		pqxx::work txn(conn);
 		// Comprovem si existeix algun usuari amb sobrenom "sn":
-		string comanda = "SELECT sobrenom FROM public.\"Usuari\" WHERE sobrenom = ";
+		string comanda = "SELECT sobrenom FROM public.usuari WHERE sobrenom = ";
 		comanda = comanda + "\'" + sn + "\'";
 		pqxx::result result = txn.exec(comanda);
 		bool error = false;
@@ -85,7 +85,7 @@ void registrarUsuari(std::string n, std::string sn, std::string ct, std::string 
 		}
 		else {
 			// Comprovem si existeix algun usuari amb correu electrònic "ce":
-			comanda = "SELECT \"correuElectronic\" FROM public.\"Usuari\" WHERE \"correuElectronic\" = ";
+			comanda = "SELECT correu_electronic FROM public.usuari WHERE correu_electronic = ";
 			comanda = comanda + "\'" + ce + "\'";
 			result = txn.exec(comanda);
 			if (result.size() != 0) {
