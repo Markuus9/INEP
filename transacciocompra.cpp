@@ -11,7 +11,7 @@ void comprarVideojoc(std::string n) {
 			bool esvideojoc = consultarVideojoc(n, false);
 			if (esvideojoc) {
 				// Busquem la qualificació per edats del videojoc, ja que ens servirà més endavant.
-				std::string comanda = "SELECT qualificacio_edat FROM public.Videojoc WHERE nom = ";
+				std::string comanda = "SELECT qualificacio_edat FROM public.videojoc WHERE nom = ";
 				comanda = comanda + "\'" + n + "\'";
 				pqxx::result result = txn.exec(comanda);
 				int edatjoc = atoi(result[0][0].c_str());
@@ -28,7 +28,7 @@ void comprarVideojoc(std::string n) {
 				}
 
 				// Comprovem si el videojoc és apropiat per l'edat de l'usuari.
-				comanda = "SELECT Age(data_naixement) from public.Usuari where sobrenom = ";
+				comanda = "SELECT AGE(timestamp \'"+ v.obteDataNaixementUsuari() + "\') from public.usuari WHERE sobrenom = ";
 				comanda = comanda + "\'" + sobrenomusu + "\'";
 				result = txn.exec(comanda);
 				// Aquesta comanda retorna un resultat de tipus "X years Y mons Z days".
@@ -69,7 +69,7 @@ void comprarVideojoc(std::string n) {
 						datacompra = datacompra + resultat_timestamp[i];
 					}
 					// Enregistrem la compra:
-					comanda = "INSERT INTO public.Compra VALUES (";
+					comanda = "INSERT INTO public.compra VALUES (";
 					comanda = comanda + "\'" + datacompra + "\', ";
 					comanda = comanda + "\'" + sobrenomusu + "\', ";
 					comanda = comanda + "\'" + n + "\', ";
@@ -78,7 +78,7 @@ void comprarVideojoc(std::string n) {
 					// Mostrar la data i hora de la compra:
 					std::cout << "Compra registrada: " << datacompra << endl;
 					// Buscar paquets on es troba el videojoc amb nom "n":
-					comanda = "SELECT paquet FROM public.Conte WHERE videojoc = ";
+					comanda = "SELECT paquet FROM public.conte WHERE videojoc = ";
 					comanda = comanda + "\'" + n + "\'";
 					result = txn.exec(comanda);
 
@@ -90,7 +90,7 @@ void comprarVideojoc(std::string n) {
 						std::string nompaquet = result[i][0].c_str();
 						std::cout << "Videojocs relacionats que es troben al paquet " << nompaquet << ":" << endl;
 						std::string com2;
-						com2 = "SELECT v.nom, e.descripcio, e.preu FROM Videojoc v, Conte con, element_compra e WHERE con.videojoc = v.nom AND con.paquet = ";
+						com2 = "SELECT v.nom, e.descripcio, e.preu FROM videojoc v, conte con, element_compra e WHERE con.videojoc = v.nom AND con.paquet = ";
 						com2 = com2 + "\'" + nompaquet + "\'";
 						com2 = com2 + " AND v.nom = e.nom AND v.data_llansament <= NOW() ORDER BY v.nom ASC";
 						pqxx::result resultatinfo = txn.exec(com2);
@@ -143,7 +143,7 @@ void comprarPaquet(std::string n) {
 				// Comprovem si l'usuari ja ha comprat el paquet de videojocs amb anterioritat.
 				Videoconsola& v = Videoconsola::getInstance();
 				std::string sobrenomusu = v.obteSobrenomUsuari();
-				comanda = "SELECT * FROM public.Compra WHERE usuari = ";
+				comanda = "SELECT * FROM public.compra WHERE usuari = ";
 				comanda = comanda + "\'" + sobrenomusu + "\' and element = " + "\'" + n + "\'";
 				result = txn.exec(comanda);
 				// Busquem per clau primària. "result" té una fila o no en té cap.
@@ -208,7 +208,7 @@ void consultarCompres() {
 		pqxx::work txn(conn);
 		Videoconsola& v = Videoconsola::getInstance();
 		std::string sobrenomusu = v.obteSobrenomUsuari();
-		string comanda = "SELECT data, element, preu_pagat FROM public.Compra WHERE Usuari = ";
+		string comanda = "SELECT data, element, preu_pagat FROM public.compra WHERE Usuari = ";
 		comanda = comanda + "\'" + sobrenomusu + "\' ORDER BY data DESC";
 		pqxx::result result = txn.exec(comanda);
 		int totalgastat = 0;
@@ -255,7 +255,7 @@ void consultarCompres() {
 			if (espaquet) {
 				// Mostrem el contingut del paquet
 				std::cout << "\t Videojocs:" << endl;
-				std::string comandapaquet = "SELECT v.nom, e.descripcio FROM Videojoc v, Conte con, element_compra e WHERE con.videojoc = v.nom AND con.paquet = ";
+				std::string comandapaquet = "SELECT v.nom, e.descripcio FROM Videojoc v, conte con, element_compra e WHERE con.videojoc = v.nom AND con.paquet = ";
 				comandapaquet = comandapaquet + "\'" + nomelem + "\' AND v.nom = e.nom ORDER BY v.nom ASC";
 				pqxx::result resultatinfo = txn.exec(comandapaquet);
 				for (size_t i2 = 0; i2 < resultatinfo.size(); ++i2) {
